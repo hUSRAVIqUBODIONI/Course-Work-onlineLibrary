@@ -13,23 +13,17 @@
 <body>
     <nav class="navbar">
         <ul class="nav-links">
-            <li class="nav-item">
-                <a href="/" class="nav-link">
-                    <i class="fas fa-home"></i> Главное меню
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link">
-                    <i class="fas fa-book"></i> Книги
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="/profile" class="nav-link">
-                    <i class="fas fa-user"></i> Личный кабинет
-                </a>
-            </li>
+            <li class="nav-item"><a href="/" class="nav-link"><i class="fas fa-home"></i> Главное меню</a></li>
+            {% if request.session.reader_id %}
+            <li class="nav-item"><a href="/profile" class="nav-link"><i class="fas fa-user"></i> Личный кабинет</a></li>
+            <li class="nav-item"><a href="/logout" class="nav-link"><i class="fas fa-right-from-bracket"></i> Выйти</a></li>
+            {% else %}
+            <li class="nav-item"><a href="/login" class="nav-link"><i class="fas fa-sign-in-alt"></i> Войти</a></li>
+            <li class="nav-item"><a href="/register" class="nav-link"><i class="fas fa-user-plus"></i> Зарегистрироваться</a></li>
+            {% endif %}
         </ul>
     </nav>
+    
     
     <div class="main-content">
         {% block content %}

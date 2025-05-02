@@ -1,9 +1,14 @@
 {% extends 'main/layout.html' %}
-
-
 {% block content %}
-<div class="container mt-5">
-    <h2>Профиль читателя</h2>
-    
-</div>
+{% if reader %}
+<h2>Личный кабинет</h2>
+<p><strong>Имя:</strong> {{ reader.name }}</p>
+<p><strong>Фамилия:</strong> {{ reader.surname }}</p>
+<p><strong>Email:</strong> {{ reader.email }}</p>
+<p><strong>Дата рождения:</strong> {{ reader.date_of_birth }}</p>
+<p><strong>Дата регистрации:</strong> {{ reader.date_of_registration }}</p>
+<p><a href="{% url 'logout' %}">Выйти</a></p>
+{% else %}
+<p>Вы не авторизованы. <a href="{% url 'login' %}">Войти</a></p>
+{% endif %}
 {% endblock %}

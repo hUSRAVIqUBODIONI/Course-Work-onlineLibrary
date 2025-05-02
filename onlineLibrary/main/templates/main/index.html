@@ -1,8 +1,22 @@
 {% extends 'main/layout.html' %}
-
-{% block title %}Главная страница{% endblock %}
-
 {% block content %}
-    <h1 style="animation: fadeIn 1s ease-in-out;" class="welcome-message">Добро пожаловать на наш сайт!</h1>
-    <p>Используйте панель навигации для перехода между разделами</p>
+<h2>Список книг</h2>
+{% if books %}
+    <ul>
+        {% for book in books %}
+        <li>
+            <strong>{{ book.title }}</strong> (ISBN: {{ book.isbn }})<br>
+            {% if book.description %}<em>{{ book.description }}</em><br>{% endif %}
+            {% if book.rating %}Оценка: {{ book.rating }}<br>{% endif %}
+            {% if book.date_of_publish %}Дата публикации: {{ book.date_of_publish }}<br>{% endif %}
+            {% if request.session.reader_id == 1 %}
+                <a href="{% url 'delete_book' book.isbn %}" onclick="return confirm('Удалить книгу?')">Удалить</a>
+            {% endif %}
+        </li>
+        <hr>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Книг пока нет.</p>
+{% endif %}
 {% endblock %}

@@ -1,8 +1,12 @@
-from django.urls import path
+from django.urls import include, path
+from books.views import book_list
 from . import views
 
-
 urlpatterns = [
-    path('', views.index, name='home'),
-    path('profile/', views.profile, name='profile'),  # Добавляем параметр
+    path('', book_list, name='home'),
+    path('profile/', views.profile, name='profile'),
+    path('login/', views.login_view, name='login'),
+    path('register/', views.register_view, name='register'),
+    path('logout/', views.logout_view, name='logout'),
+    path('books/', include('books.urls')),  # Подключаем app
 ]
