@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-rl_rpgz1iso*x+uv90!*(ho-gylz9+q#y_!58-1s4a=%2_1vqs'
+SECRET_KEY = 'django-insecure-2bib$e+721ckv(6+%mdyuomaw5%w#$#-7++s++$u1=c205r6l$'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -31,6 +31,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'main',
+    'books',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -120,3 +122,12 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+    "/var/www/static/",
+]
+
+LOGIN_URL = 'login'  # Куда перенаправлять неавторизованных пользователей
+LOGIN_REDIRECT_URL = 'profile'  # Куда перенаправлять после входа
+LOGOUT_REDIRECT_URL = 'home'  # Куда перенаправлять после выхода
