@@ -10,7 +10,7 @@
         <p>
             <a href="{% url 'add_book' %}">Добавить книгу</a> |
             <a href="{% url 'add_author' %}">Добавить автора</a> |
-            <a href="{% url 'add_examplar' %}">Добавить экземпляр</a>
+            <a href="{% url 'add_examplar' %}">Добавить экземпляр</a> |
         </p>
     {% endif %}
 {% else %}
@@ -29,6 +29,9 @@
             <th>Дата публикации</th>
             <th>Количество экземпляров</th>
             <th>Авторы</th>
+            {% if reader and reader.id == 1 %}
+                <th>Действия</th>
+            {% endif %}
         </tr>
     </thead>
     <tbody>
@@ -44,12 +47,21 @@
                     <a href="{% url 'author_detail' author.id %}">{{ author.name }} {{ author.surname }}</a>{% if not forloop.last %}, {% endif %}
                 {% endfor %}
             </td>
+            {% if reader and reader.id == 1 %}
+            <td>
+                <form action="{% url 'delete_book' book.isbn %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" onclick="return confirm('Удалить книгу {{ book.title }}?')">Удалить</button>
+                </form>
+            </td>
+            {% endif %}
         </tr>
         {% empty %}
         <tr>
-            <td colspan="6">Книг пока нет.</td>
+            <td colspan="7">Книг пока нет.</td>
         </tr>
         {% endfor %}
     </tbody>
+    
 </table>
 {% endblock %}

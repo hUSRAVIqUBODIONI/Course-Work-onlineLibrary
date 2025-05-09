@@ -1,0 +1,65 @@
+{% extends 'main/layout.html' %}
+
+{% block content %}
+<h1>Профиль читателя</h1>
+
+<p><strong>Имя:</strong> {{ reader.name }}</p>
+<p><strong>Фамилия:</strong> {{ reader.surname }}</p>
+<p><strong>Номер читателя:</strong> {{ reader.reader_number }}</p>
+<p>Текущий пользователь: {{ request.user.username }} - Админ: {{ request.user.is_superuser }}</p>
+
+<h2>История аренды</h2>
+<table border="1" cellpadding="5" cellspacing="0">
+    <thead>
+        <tr>
+            <th>Книга</th>
+            <th>Экземпляр</th>
+            <th>Дата аренды</th>
+            <th>Дата возврата</th>
+            <th>Статус</th>
+            {% if request.user.is_superuser %}
+                <th>Действия</th>
+            {% endif %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for issuance in issuances %}
+            <tr>
+                <td>{{ issuance.exampler.book.title }}</td>
+                <td>{{ issuance.exampler }}</td>
+                <td>{{ issuance.issuance_date|date:"F j, Y" }}</td>
+                <td>
+                    {% if issuance.return_date %}
+                        {{ issuance.return_date|date:"F j, Y" }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+                <td>
+                    {% if issuance.status == 'returned' %}
+                        Возвращена
+                    {% elif issuance.status == 'active' %}
+                        Активная
+                    {% elif issuance.status == 'overdue' %}
+                        Просрочена
+                    {% endif %}
+                </td>
+                {% if request.user.is_superuser %}
+                    <td>
+                        {% if not issuance.status == 'returned' %}
+                            <form method="post" action="{% url 'return_book' issuance.id %}">
+                                {% csrf_token %}
+                                <button type="submit">Вернуть</button>
+                            </form>
+                        {% endif %}
+                    </td>
+                {% endif %}
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="6">Нет записей об аренде.</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

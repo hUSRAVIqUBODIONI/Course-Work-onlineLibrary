@@ -1,9 +1,48 @@
 
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from .forms import LoginForm, RegisterForm
 from .models import Reader
 from books.views import Issuance
 from django.utils import timezone
+from books.models import Issuance
+from django.contrib.auth.decorators import login_required
+
+
+from django.utils import timezone
+from books.models import Issuance
+
+def return_book(request, issuance_id):
+    issuance = get_object_or_404(Issuance, id=issuance_id)
+
+    # Если книга ещё не возвращена, то возвращаем её
+    issuance.return_date = timezone.now()
+    issuance.status = 'returned'
+    issuance.save()
+
+    return redirect('reader_profile', reader_id=issuance.reader.id)
+
+
+from django.utils import timezone
+
+@login_required
+def reader_profile(request, reader_id):
+    # Если это админ, то можем показывать профиль другого читателя
+    reader = get_object_or_404(Reader, id=reader_id)
+    issuances = Issuance.objects.filter(reader=reader)
+    today = timezone.now().date()  # Получаем текущую дату
+    
+    return render(request, 'reader_profile.html', {
+        'reader': reader,
+        'issuances': issuances,
+        'today': today,  # Передаем текущую дату в шаблон
+    })
+
+def search_reader(request):
+    query = request.GET.get('reader_number')
+    reader = None
+    if query:
+        reader = Reader.objects.filter(reader_number=query).first()
+    return render(request, 'main/search_reader.html', {'reader': reader})
 
 
 def index(request):

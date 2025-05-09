@@ -1,0 +1,17 @@
+{% extends 'main/layout.html' %}
+{% block content %}
+    <h2>Поиск читателя</h2>
+    <form method="get">
+        <input type="text" name="reader_number" placeholder="Введите читательский номер">
+        <button type="submit">Найти</button>
+    </form>
+
+    {% if reader %}
+        <h3>Результат:</h3>
+        <p>{{ reader.name }} {{ reader.surname }} ({{ reader.email }})</p>
+        <p>Читательский номер: {{ reader.reader_number }}</p>
+        <a href="{% url 'reader_profile' reader.id %}">Перейти в профиль</a>
+    {% elif query %}
+        <p>Читатель не найден</p>
+    {% endif %}
+{% endblock %}

@@ -1,7 +1,8 @@
 from django.db import models
 from main.models import Reader  # Импорт Reader модели из приложения main
 from django.utils import timezone
-
+from django.utils import timezone
+from django.db import models
 
 # Модель для авторов
 class Author(models.Model):
@@ -55,16 +56,27 @@ class Exampler(models.Model):
         return f"Экземпляр {self.inventory_number} — {self.book.title} ({self.condition})"
 
 
-# Модель для выдачи книг
+
+
+
 class Issuance(models.Model):
-    reader = models.ForeignKey(Reader, on_delete=models.CASCADE, related_name='issuances')
-    exampler = models.ForeignKey(Exampler, on_delete=models.CASCADE, related_name='issuances')
-    issuance_date = models.DateField(default=timezone.now)
-    return_date = models.DateField(default=timezone.now() + timezone.timedelta(weeks=2))
+    STATUS_CHOICES = [
+        ('active', 'Активный'),
+        ('overdue', 'Просрочено'),
+        ('returned', 'Вернута'),
+    ]
+
+    reader = models.ForeignKey('main.Reader', on_delete=models.CASCADE, related_name='issuances')
+    exampler = models.ForeignKey('books.Exampler', on_delete=models.CASCADE, related_name='issuances')
+    issuance_date = models.DateTimeField(default=timezone.now)  # Используем DateTimeField
+    return_date = models.DateTimeField(blank=True, null=True)  # Используем DateTimeField
     rating = models.DecimalField(max_digits=2, decimal_places=1, null=True, blank=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='active')
 
-    def __str__(self):
-        return f"{self.reader.name} {self.reader.surname} - {self.exampler.book.title}"
-
-    class Meta:
-        unique_together = ('reader', 'exampler')
+    def save(self, *args, **kwargs):
+        if self.status != 'returned':
+            if self.return_date and timezone.now() > self.return_date:
+                self.status = 'overdue'
+            else:
+                self.status = 'active'
+        super().save(*args, **kwargs)
