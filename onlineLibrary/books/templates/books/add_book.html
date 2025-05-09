@@ -1,9 +1,12 @@
 {% extends 'main/layout.html' %}
 {% block content %}
 <h2>Добавить книгу</h2>
+
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Добавить</button>
+    <button type="submit">Добавить книгу</button>
 </form>
+
+<p>Не нашли нужного автора? <a href="{% url 'add_author' %}">➕ Новый автор</a></p>
 {% endblock %}

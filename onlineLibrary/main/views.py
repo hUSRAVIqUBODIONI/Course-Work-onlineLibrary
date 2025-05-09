@@ -2,6 +2,7 @@
 from django.shortcuts import render, redirect
 from .forms import LoginForm, RegisterForm
 from .models import Reader
+from books.views import Issuance
 from django.utils import timezone
 
 
@@ -42,10 +43,25 @@ def register_view(request):
         form = RegisterForm()
     return render(request, 'main/register.html', {'form': form})
 
+
 def profile(request):
     reader_id = request.session.get('reader_id')
     reader = Reader.objects.filter(id=reader_id).first() if reader_id else None
-    return render(request, 'main/profile.html', {'reader': reader})
+
+    if reader:
+        issuances = Issuance.objects.filter(reader=reader)
+    else:
+        issuances = []
+
+    return render(request, 'main/profile.html', {
+        'reader': reader,
+        'issuances': issuances  # передаем список аренд
+    })
+
+def logout_view(request):
+    request.session.flush()  # Очистка сессии
+    return redirect('login')  # Перенаправление на страницу входа
+
 
 def logout_view(request):
     request.session.flush()

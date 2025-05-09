@@ -1,22 +1,55 @@
 {% extends 'main/layout.html' %}
+
 {% block content %}
-<h2>Список книг</h2>
-{% if books %}
-    <ul>
-        {% for book in books %}
-        <li>
-            <strong>{{ book.title }}</strong> (ISBN: {{ book.isbn }})<br>
-            {% if book.description %}<em>{{ book.description }}</em><br>{% endif %}
-            {% if book.rating %}Оценка: {{ book.rating }}<br>{% endif %}
-            {% if book.date_of_publish %}Дата публикации: {{ book.date_of_publish }}<br>{% endif %}
-            {% if request.session.reader_id == 1 %}
-                <a href="{% url 'delete_book' book.isbn %}" onclick="return confirm('Удалить книгу?')">Удалить</a>
-            {% endif %}
-        </li>
-        <hr>
-        {% endfor %}
-    </ul>
+<h1>Онлайн библиотека</h1>
+
+{% if reader %}
+    <p>Добро пожаловать, {{ reader.name }} {{ reader.surname }}!</p>
+   
+    {% if reader.id == 1 %}
+        <p>
+            <a href="{% url 'add_book' %}">Добавить книгу</a> |
+            <a href="{% url 'add_author' %}">Добавить автора</a> |
+            <a href="{% url 'add_examplar' %}">Добавить экземпляр</a>
+        </p>
+    {% endif %}
 {% else %}
-    <p>Книг пока нет.</p>
+    <p><a href="{% url 'login' %}">Войти</a> или <a href="{% url 'register' %}">Зарегистрироваться</a></p>
 {% endif %}
+
+<hr>
+
+<h2>Список книг</h2>
+<table border="1" cellpadding="5" cellspacing="0">
+    <thead>
+        <tr>
+            <th>Название</th>
+            <th>ISBN</th>
+            <th>Рейтинг</th>
+            <th>Дата публикации</th>
+            <th>Количество экземпляров</th>
+            <th>Авторы</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for book in books %}
+        <tr>
+            <td><a href="{% url 'book_detail' book.id %}">{{ book.title }}</a></td>
+            <td>{{ book.isbn }}</td>
+            <td>{{ book.rating }}</td>
+            <td>{{ book.date_of_publish }}</td>
+            <td>{{ book.exemplars.count }}</td>
+            <td>
+                {% for author in book.authors.all %}
+                    <a href="{% url 'author_detail' author.id %}">{{ author.name }} {{ author.surname }}</a>{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6">Книг пока нет.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 {% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'main/layout.html' %}
+
+{% block content %}
+  <h1>{{ book.title }}</h1>
+
+  <p><strong>Автор(ы):</strong>
+    {% for author in authors %}
+      {{ author.name }} {{ author.surname }}{% if not forloop.last %}, {% endif %}
+    {% endfor %}
+  </p>
+
+  <p><strong>Жанры:</strong>
+    {% for genre in genres %}
+      {{ genre.name }}{% if not forloop.last %}, {% endif %}
+    {% endfor %}
+  </p>
+
+  <p><strong>Год публикации:</strong> {{ book.date_of_publish }}</p>
+  <p><strong>Описание:</strong> {{ book.description }}</p>
+  <p><strong>Рейтинг:</strong> {% if book.rating %}{{ book.rating }}{% else %}Нет рейтинга{% endif %}</p>
+
+  <p><strong>Количество аренд:</strong> {{ times_borrowed }}</p>
+
+  <h2>Доступные экземпляры книги:</h2>
+  {% if available_examplers %}
+    <ul>
+    {% for exampler in available_examplers %}
+      <li>
+        <p>Экземпляр №{{ exampler.inventory_number }} - {{ exampler.condition }}</p>
+        <form method="POST" action="{% url 'borrow_examplar' exampler.id %}">
+          {% csrf_token %}
+          <button type="submit">Арендовать</button>
+        </form>
+      </li>
+    {% endfor %}
+    </ul>
+  {% else %}
+    <p>Все экземпляры арендованы.</p>
+  {% endif %}
+{% endblock %}

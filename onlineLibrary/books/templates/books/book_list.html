@@ -1,0 +1,17 @@
+{% extends 'main/layout.html' %}
+
+{% block content %}
+<h2>Список книг</h2>
+<ul>
+    {% for book in books %}
+        <li>
+            <strong>{{ book.title }}</strong>
+            {% if book.authors.exists %}
+                — <a href="#">{{ book.authors.first }}</a>
+            {% endif %}
+        </li>
+    {% empty %}
+        <li>Книг пока нет.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

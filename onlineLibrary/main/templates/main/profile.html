@@ -1,14 +1,40 @@
 {% extends 'main/layout.html' %}
+
 {% block content %}
-{% if reader %}
-<h2>Личный кабинет</h2>
-<p><strong>Имя:</strong> {{ reader.name }}</p>
-<p><strong>Фамилия:</strong> {{ reader.surname }}</p>
-<p><strong>Email:</strong> {{ reader.email }}</p>
-<p><strong>Дата рождения:</strong> {{ reader.date_of_birth }}</p>
-<p><strong>Дата регистрации:</strong> {{ reader.date_of_registration }}</p>
-<p><a href="{% url 'logout' %}">Выйти</a></p>
-{% else %}
-<p>Вы не авторизованы. <a href="{% url 'login' %}">Войти</a></p>
-{% endif %}
+    {% if reader %}
+        <h2>Личный кабинет</h2>
+        <p><strong>Имя:</strong> {{ reader.name }}</p>
+        <p><strong>Фамилия:</strong> {{ reader.surname }}</p>
+        <p><strong>Email:</strong> {{ reader.email }}</p>
+        <p><strong>Дата рождения:</strong> {{ reader.date_of_birth }}</p>
+        <p><strong>Дата регистрации:</strong> {{ reader.date_of_registration }}</p>
+
+        <h3>Аренды:</h3>
+            {% if issuances %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Книга</th>
+                            <th>Экземпляр</th>
+                            <th>Дата аренды</th>
+                            <th>Дата возврата</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for issuance in issuances %}
+                            <tr>
+                                <td>{{ issuance.exampler.book.title }}</td>
+                                <td>Экземпляр №{{ issuance.exampler.id }}</td>
+                                <td>{{ issuance.issuance_date }}</td>
+                                <td>{% if issuance.return_date %}{{ issuance.return_date }}{% else %}Не возвращено{% endif %}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>У вас нет арендованных экземпляров.</p>
+            {% endif %}
+    {% else %}
+        <p>Вы не авторизованы. <a href="{% url 'login' %}">Войти</a></p>
+    {% endif %}
 {% endblock %}

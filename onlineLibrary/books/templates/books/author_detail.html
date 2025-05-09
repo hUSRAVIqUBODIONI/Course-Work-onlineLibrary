@@ -1,0 +1,29 @@
+{% extends 'main/layout.html' %}
+
+{% block content %}
+<h2>{{ author.name }} {{ author.surname }}</h2>
+
+<p><strong>Дата рождения:</strong> {{ author.date_of_birth|date:"d.m.Y" }}</p>
+
+{% if author.date_of_death %}
+    <p><strong>Дата смерти:</strong> {{ author.date_of_death|date:"d.m.Y" }}</p>
+{% endif %}
+
+<p><strong>Место рождения:</strong> {{ author.place_of_birth }}</p>
+
+{% if author.biography %}
+    <h3>О авторе</h3>
+    <p>{{ author.biography }}</p>
+{% endif %}
+
+{% if author.books.exists %}
+    <h3>Книги автора:</h3>
+    <ul>
+        {% for book in author.books.all %}
+            <li>{{ book.title }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>У этого автора пока нет книг.</p>
+{% endif %}
+{% endblock %}
